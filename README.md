@@ -13,6 +13,11 @@
             --wood: #3e2723;
         }
 
+        /* fjerner scrollbar for Chrome, Safari og nyere Edge */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
@@ -21,9 +26,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden;
+            /* fjerner scrollbar for Firefox og IE */
+            scrollbar-width: none; 
+            -ms-overflow-style: none; 
+            overflow-y: auto; 
             perspective: 1000px;
             user-select: none;
             -webkit-user-select: none;
@@ -36,13 +44,14 @@
             padding: 2.5rem 1.5rem;
             border-radius: 24px;
             text-align: center;
-            width: 340px;
-            min-height: 620px;
+            width: 360px;
+            min-height: 660px;
             position: relative;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             justify-content: center;
+            margin: 20px 0;
         }
 
         #setup-screen { display: flex; flex-direction: column; }
@@ -68,20 +77,23 @@
             display: flex;
             flex-direction: column;
             grid-column: span 2;
+            margin-top: 5px;
         }
 
         .btn-rec-label {
             position: absolute;
-            top: -8px;
-            left: 12px;
-            font-size: 0.6rem;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
             color: var(--success);
             font-weight: bold;
             background: #1e293b;
-            padding: 0 6px;
+            padding: 2px 8px;
             border-radius: 4px;
             z-index: 2;
             border: 1px solid var(--success);
+            white-space: nowrap;
         }
 
         .btn {
@@ -98,17 +110,26 @@
         .time-btn { background: #1e293b; border: 1px solid var(--primary); }
         .time-btn:hover { background: var(--primary); transform: translateY(-2px); }
         
-        .btn-30s { border: 2px solid var(--success); }
+        .btn-30s { border: 2px solid var(--success); padding: 18px 14px; }
         .btn-wide { grid-column: span 2; }
         .btn-dark { background: #334155; border: 1px solid #475569; }
 
-        /* Hjelpetekst for fullskjerm */
         .fullscreen-tip {
-            margin-top: 30px;
+            margin-top: 25px;
             font-size: 0.75rem;
             color: #64748b;
             font-style: italic;
         }
+
+        .creator-tag {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #818cf8;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
         .kb-key {
             background: #334155;
             padding: 2px 5px;
@@ -206,7 +227,7 @@
             <button class="btn time-btn" onclick="initGame(45)">45s</button>
             
             <div class="btn-wrapper">
-                <span class="btn-rec-label">Anbefalt</span>
+                <span class="btn-rec-label">Anbefalt for Klasse Utfordring</span>
                 <button class="btn time-btn btn-30s" onclick="initGame(30)">30 sekunder</button>
             </div>
             
@@ -219,7 +240,11 @@
             Hold <span class="kb-key">fn</span> + <span class="kb-key">F11</span> for fullskjerm
         </div>
 
-        <div id="hs-info" style="font-size: 0.8rem; color: var(--primary); margin-top: 20px; font-weight: bold;"></div>
+        <div class="creator-tag">
+            Skaper: Kristian N.W
+        </div>
+
+        <div id="hs-info" style="font-size: 0.8rem; color: var(--primary); margin-top: 15px; font-weight: bold;"></div>
     </div>
 
     <div id="game-screen">
@@ -256,12 +281,9 @@
     if(savedHS > 0) document.getElementById('hs-info').innerText = `BESTE POENGSUM: ${savedHS}`;
 
     function startCustom() {
-        let input = prompt("Velg tid mellom 5 sekunder og 10 minutter (sekunder):");
+        let input = prompt("Velg tid (sekunder):");
         let val = parseInt(input);
-        if (!isNaN(val)) {
-            if (val >= 5 && val <= 600) initGame(val);
-            else alert("Vennligst velg mellom 5 og 600.");
-        }
+        if (!isNaN(val) && val >= 5 && val <= 600) initGame(val);
     }
 
     function initGame(val) {
