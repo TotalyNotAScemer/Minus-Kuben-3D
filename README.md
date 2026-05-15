@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minus-Kuben: Master Edition</title>
+    <title>Minus-Kuben: Master Pro</title>
     <style>
         :root {
             --primary: #6366f1;
@@ -24,59 +25,121 @@
             margin: 0;
             overflow: hidden;
             perspective: 1000px;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .game-card {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(12px);
             border: 4px solid var(--wood);
-            padding: 2rem;
+            padding: 2.5rem 1.5rem;
             border-radius: 24px;
             text-align: center;
-            width: 100%;
-            max-width: 450px;
+            width: 340px;
+            min-height: 620px;
             position: relative;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        /* Skjermstyring */
-        #setup-screen { display: block; }
+        #setup-screen { display: flex; flex-direction: column; }
         #game-screen { display: none; }
 
-        h1 { margin-bottom: 10px; font-size: 1.8rem; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { 
+            margin-bottom: 25px; 
+            font-size: 1.8rem; 
+            background: linear-gradient(to right, #818cf8, #c084fc); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
 
         .time-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 20px 0;
+        }
+
+        .btn-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            grid-column: span 2;
+        }
+
+        .btn-rec-label {
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            font-size: 0.6rem;
+            color: var(--success);
+            font-weight: bold;
+            background: #1e293b;
+            padding: 0 6px;
+            border-radius: 4px;
+            z-index: 2;
+            border: 1px solid var(--success);
         }
 
         .btn {
             border: none;
             color: white;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
             transition: 0.2s;
+            font-size: 1rem;
         }
 
         .time-btn { background: #1e293b; border: 1px solid var(--primary); }
-        .time-btn:hover { background: var(--primary); }
+        .time-btn:hover { background: var(--primary); transform: translateY(-2px); }
         
-        .special-btn { grid-column: span 3; font-size: 1.1rem; padding: 15px; }
-        .infinite-btn { background: var(--primary); }
-        .custom-btn { background: #334155; }
+        .btn-30s { border: 2px solid var(--success); }
+        .btn-wide { grid-column: span 2; }
+        .btn-dark { background: #334155; border: 1px solid #475569; }
 
-        /* Spill-elementer */
-        .timer-display { font-family: 'Courier New', monospace; font-size: 2.2rem; color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.3); }
-        .stats-bar { display: flex; justify-content: space-between; color: #94a3b8; font-size: 0.9rem; margin-top: 10px; }
+        /* Hjelpetekst for fullskjerm */
+        .fullscreen-tip {
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-style: italic;
+        }
+        .kb-key {
+            background: #334155;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #cbd5e1;
+            font-family: monospace;
+            border-bottom: 2px solid #1e293b;
+        }
+
+        .timer-display { 
+            font-family: 'Courier New', monospace; 
+            font-size: 3rem; 
+            color: #f87171; 
+            text-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+        }
+
+        .stat-box { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; color: #94a3b8; }
 
         .scene {
-            width: 260px;
-            height: 130px;
-            margin: 30px auto;
+            width: 240px;
+            height: 120px;
+            margin: 20px auto;
             perspective: 600px;
         }
 
@@ -90,70 +153,82 @@
 
         .cube-face {
             position: absolute;
-            width: 260px;
-            height: 130px;
+            width: 240px;
+            height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.2rem;
+            font-size: 3rem;
             font-weight: 900;
-            background: #e2e8f0;
+            background: #f8fafc;
             color: #1e293b;
-            border: 8px solid var(--wood);
+            border: 6px solid var(--wood);
             border-radius: 4px;
             backface-visibility: hidden;
         }
 
-        .face-0 { transform: rotateX(0deg) translateZ(65px); }
-        .face-1 { transform: rotateX(-90deg) translateZ(65px); }
-        .face-2 { transform: rotateX(-180deg) translateZ(65px); }
-        .face-3 { transform: rotateX(-270deg) translateZ(65px); }
+        .face-0 { transform: rotateX(0deg) translateZ(60px); }
+        .face-1 { transform: rotateX(-90deg) translateZ(60px); }
+        .face-2 { transform: rotateX(-180deg) translateZ(60px); }
+        .face-3 { transform: rotateX(-270deg) translateZ(60px); }
 
         .minus-sign { color: var(--primary); margin: 0 10px; }
 
-        .game-controls { display: flex; gap: 10px; margin-top: 10px; }
         input {
-            background: #1e293b;
+            background: #0f172a;
             border: 2px solid #334155;
             border-radius: 12px;
             color: white;
-            font-size: 2rem;
+            font-size: 2.5rem;
             padding: 10px;
             width: 100%;
+            box-sizing: border-box;
             text-align: center;
             outline: none;
+            margin-top: 10px;
+            user-select: auto;
+            -webkit-user-select: auto;
         }
-        .stop-btn { background: var(--error); width: 80px; font-size: 0.8rem; }
-
-        .feedback { height: 25px; margin-top: 10px; font-weight: bold; }
+        
+        .stop-btn { background: var(--error); width: 100%; margin-top: 15px; padding: 12px; }
+        .feedback { height: 25px; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="game-card">
     <div id="setup-screen">
-        <h1>Minus-Kuben 3D</h1>
-        <p style="color:#94a3b8; font-size: 0.9rem;">Velg modus for å starte</p>
-        
+        <h1>MINUS-KUBEN</h1>
         <div class="time-grid">
             <button class="btn time-btn" onclick="initGame(10)">10s</button>
             <button class="btn time-btn" onclick="initGame(15)">15s</button>
             <button class="btn time-btn" onclick="initGame(20)">20s</button>
-            <button class="btn time-btn" onclick="initGame(30)">30s</button>
             <button class="btn time-btn" onclick="initGame(45)">45s</button>
-            <button class="btn time-btn" onclick="initGame(60)">1m</button>
             
-            <button class="btn special-btn infinite-btn" onclick="initGame('infinite')">♾️ EVIG MODUS (Tell opp)</button>
-            <button class="btn special-btn custom-btn" onclick="startCustom()">Egendefinert tid</button>
+            <div class="btn-wrapper">
+                <span class="btn-rec-label">Anbefalt</span>
+                <button class="btn time-btn btn-30s" onclick="initGame(30)">30 sekunder</button>
+            </div>
+            
+            <button class="btn time-btn" onclick="initGame(60)">1 minutt</button>
+            <button class="btn time-btn btn-dark" onclick="startCustom()">⚙️ Custom</button>
+            <button class="btn time-btn btn-wide" style="background: var(--primary);" onclick="initGame('infinite')">♾️ EVIG MODUS</button>
         </div>
-        <div id="hs-info" style="font-size: 0.8rem; color: var(--primary);"></div>
+
+        <div class="fullscreen-tip">
+            Hold <span class="kb-key">fn</span> + <span class="kb-key">F11</span> for fullskjerm
+        </div>
+
+        <div id="hs-info" style="font-size: 0.8rem; color: var(--primary); margin-top: 20px; font-weight: bold;"></div>
     </div>
 
     <div id="game-screen">
         <div class="timer-display" id="timer">0.0</div>
-        <div class="stats-bar">
-            <span id="counter">Poeng: 0</span>
-            <span id="mode-label">Modus: --</span>
+        <div class="stats-grid">
+            <div class="stat-box">Poeng: <span id="score">0</span></div>
+            <div class="stat-box">RPM: <span id="rpm">0</span></div>
+            <div class="stat-box">✅: <span id="correct-count">0</span></div>
+            <div class="stat-box">❌: <span id="wrong-count">0</span></div>
         </div>
 
         <div class="scene">
@@ -165,70 +240,52 @@
             </div>
         </div>
 
-        <div class="game-controls">
-            <input type="number" id="ans" placeholder="?" autocomplete="off">
-            <button class="btn stop-btn" onclick="endGame()">STOPP</button>
-        </div>
+        <input type="number" id="ans" placeholder="?" autocomplete="off">
+        <button class="btn stop-btn" onclick="endGame()">AVSLUTT</button>
         <div class="feedback" id="msg"></div>
     </div>
 </div>
 
 <script>
     const ranges = [[1,3], [2,5], [3,7], [4,9], [5,12], [7,15], [12,20]];
-    let currentRangeIdx = 0;
-    let solvedCount = 0;
-    let mode = ''; // 'countdown' eller 'infinite'
-    let timeValue = 0;
-    let startTime = null;
-    let timerInterval = null;
-    let rotationCount = 0;
-    let currentTask = [0, 0];
+    let currentRangeIdx = 0, score = 0, corrects = 0, wrongs = 0;
+    let timeValue = 0, startTime = null, timerInterval = null, rotationCount = 0, currentTask = [0, 0];
+    let mode = 'countdown';
 
-    // Highscore logikk
     const savedHS = localStorage.getItem('kubeHS') || 0;
-    if(savedHS > 0) document.getElementById('hs-info').innerText = `Din Highscore: ${savedHS} poeng`;
+    if(savedHS > 0) document.getElementById('hs-info').innerText = `BESTE POENGSUM: ${savedHS}`;
 
     function startCustom() {
-        let val = prompt("Antall sekunder?");
-        if (val && !isNaN(val)) initGame(parseInt(val));
+        let input = prompt("Velg tid mellom 5 sekunder og 10 minutter (sekunder):");
+        let val = parseInt(input);
+        if (!isNaN(val)) {
+            if (val >= 5 && val <= 600) initGame(val);
+            else alert("Vennligst velg mellom 5 og 600.");
+        }
     }
 
     function initGame(val) {
-        solvedCount = 0;
-        rotationCount = 0;
-        currentRangeIdx = 0;
-        
-        if (val === 'infinite') {
-            mode = 'infinite';
-            timeValue = 0;
-            document.getElementById('mode-label').innerText = "Modus: Evig";
-        } else {
-            mode = 'countdown';
-            timeValue = val;
-            document.getElementById('mode-label').innerText = `Mål: ${val}s`;
-        }
-
+        score = 0; corrects = 0; wrongs = 0; rotationCount = 0; currentRangeIdx = 0;
+        if (val === 'infinite') { mode = 'infinite'; timeValue = 0; }
+        else { mode = 'countdown'; timeValue = val; }
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('game-screen').style.display = 'block';
-        
         currentTask = generateTask();
         updateFace(0, currentTask);
-        
         startTime = Date.now();
         runTimer();
-        document.getElementById('ans').focus();
+        setTimeout(() => document.getElementById('ans').focus(), 50);
     }
 
     function runTimer() {
         timerInterval = setInterval(() => {
-            const now = Date.now();
-            const diff = (now - startTime) / 1000;
-
+            const diff = (Date.now() - startTime) / 1000;
+            if (diff > 0) document.getElementById('rpm').innerText = (corrects / (diff / 60)).toFixed(1);
             if (mode === 'infinite') {
                 document.getElementById('timer').innerText = diff.toFixed(1);
             } else {
                 let remaining = (timeValue - diff).toFixed(1);
-                document.getElementById('timer').innerText = remaining;
+                document.getElementById('timer').innerText = Math.max(0, remaining);
                 if (remaining <= 0) endGame();
             }
         }, 100);
@@ -238,9 +295,7 @@
         const r = ranges[currentRangeIdx];
         let n1 = Math.floor(Math.random() * (r[1] - r[0] + 1)) + r[0];
         let n2 = Math.floor(Math.random() * (r[1] - r[0] + 1)) + r[0];
-        const t1 = Math.max(n1, n2);
-        const t2 = Math.min(n1, n2);
-        return (t1 === t2) ? [t1 + 1, t2] : [t1, t2];
+        return [Math.max(n1, n2), Math.min(n1, n2)];
     }
 
     function updateFace(faceIdx, task) {
@@ -249,57 +304,55 @@
 
     function check() {
         const input = document.getElementById('ans');
-        const val = parseInt(input.value);
-        if (isNaN(val)) return;
+        const userAns = parseInt(input.value);
+        if (isNaN(userAns)) return;
+        const msg = document.getElementById('msg');
+        const correctAns = currentTask[0] - currentTask[1];
 
-        if (val === (currentTask[0] - currentTask[1])) {
-            solvedCount++;
-            document.getElementById('counter').innerText = `Poeng: ${solvedCount}`;
+        if (userAns === correctAns) {
+            score += 1;
+            corrects++;
             if (currentRangeIdx < ranges.length - 1) currentRangeIdx++;
             rotate(1);
+            msg.innerText = "RIKTIG! +1"; msg.style.color = "var(--success)";
         } else {
+            const diff = Math.abs(userAns - correctAns);
+            score = Math.max(0, score - diff);
+            wrongs++;
             if (currentRangeIdx > 0) currentRangeIdx--;
             rotate(-1);
-            const msg = document.getElementById('msg');
-            msg.innerText = "FEIL! ↩️";
-            msg.style.color = "var(--error)";
-            setTimeout(() => msg.innerText = "", 600);
+            msg.innerText = `FEIL! -${diff}`; msg.style.color = "var(--error)";
         }
+        document.getElementById('score').innerText = score;
+        document.getElementById('correct-count').innerText = corrects;
+        document.getElementById('wrong-count').innerText = wrongs;
+        setTimeout(() => msg.innerText = "", 600);
     }
 
     function rotate(dir) {
         rotationCount += dir;
         currentTask = generateTask();
-        let faceIdx = ((rotationCount % 4) + 4) % 4;
-        updateFace(faceIdx, currentTask);
+        updateFace(((rotationCount % 4) + 4) % 4, currentTask);
         document.getElementById('cube').style.transform = `rotateX(${rotationCount * 90}deg)`;
         document.getElementById('ans').value = '';
     }
 
     function endGame() {
         clearInterval(timerInterval);
-        const finalTime = ((Date.now() - startTime) / 1000).toFixed(2);
-        
-        // Lagre Highscore hvis det var en tidsbegrenset runde
-        if (mode === 'countdown' && solvedCount > savedHS) {
-            localStorage.setItem('kubeHS', solvedCount);
-        }
-
+        if (mode === 'countdown' && score > savedHS) localStorage.setItem('kubeHS', score);
         document.querySelector('.game-card').innerHTML = `
-            <h1 style="color:var(--primary)">Runde Ferdig!</h1>
-            <div style="margin: 20px 0; font-size: 1.2rem;">
-                <p>Poeng: <b>${solvedCount}</b></p>
-                <p>Tid brukt: <b>${finalTime}s</b></p>
-                <p>Snittfart: <b>${(finalTime/solvedCount || 0).toFixed(2)}s/stk</b></p>
+            <h1 style="color:var(--primary)">RESULTAT</h1>
+            <div style="margin: 15px 0; font-size: 1.1rem; text-align: left; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <p>🏆 Poeng: <b>${score}</b></p>
+                <p>✅ Riktige: <b>${corrects}</b></p>
+                <p>❌ Feil: <b>${wrongs}</b></p>
+                <p>⚡ RPM: <b>${document.getElementById('rpm').innerText}</b></p>
             </div>
-            <button onclick="location.reload()" style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">HOVEDMENY</button>
+            <button onclick="location.reload()" style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 1.1rem;">TIL MENY</button>
         `;
     }
 
-    document.getElementById('ans').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') check();
-    });
+    document.getElementById('ans').addEventListener('keypress', (e) => { if (e.key === 'Enter') check(); });
 </script>
-
 </body>
 </html>
