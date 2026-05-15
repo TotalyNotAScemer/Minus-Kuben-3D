@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="no">
 <head>
     <meta charset="UTF-8">
@@ -11,257 +10,189 @@
             --error: #ef4444;
             --bg: #0f172a;
             --wood: #3e2723;
+            --text-main: #ffffff;
+            --text-dim: #cbd5e1;
         }
 
-        /* fjerner scrollbar for Chrome, Safari og nyere Edge */
-        ::-webkit-scrollbar {
-            display: none;
-        }
+        ::-webkit-scrollbar { display: none; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             background-image: radial-gradient(circle at top right, #1e1b4b, #0f172a);
-            color: white;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            /* fjerner scrollbar for Firefox og IE */
-            scrollbar-width: none; 
-            -ms-overflow-style: none; 
-            overflow-y: auto; 
+            overflow: hidden;
             perspective: 1000px;
             user-select: none;
             -webkit-user-select: none;
         }
 
         .game-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.85); /* Mørkere bakgrunn for bedre kontrast */
+            backdrop-filter: blur(16px);
             border: 4px solid var(--wood);
-            padding: 2.5rem 1.5rem;
-            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            border-radius: 28px;
             text-align: center;
-            width: 360px;
-            min-height: 660px;
+            width: 480px;
+            min-height: 680px;
             position: relative;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin: 20px 0;
+            transition: transform 0.3s ease;
         }
 
-        #setup-screen { display: flex; flex-direction: column; }
-        #game-screen { display: none; }
+        @media (max-height: 850px) { .game-card { transform: scale(0.85); } }
+        @media (max-height: 720px) { .game-card { transform: scale(0.70); } }
+
+        .creator-tag {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.9rem;
+            color: #818cf8;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.2; 
+        }
 
         h1 { 
-            margin-bottom: 25px; 
-            font-size: 1.8rem; 
-            background: linear-gradient(to right, #818cf8, #c084fc); 
+            margin-bottom: 30px; 
+            font-size: 3rem;
+            background: linear-gradient(to right, #a5b4fc, #e879f9); /* Lysere gradient for klarhet */
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
             font-weight: 900;
-        }
-
-        .time-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .btn-wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            grid-column: span 2;
-            margin-top: 5px;
-        }
-
-        .btn-rec-label {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.65rem;
-            color: var(--success);
-            font-weight: bold;
-            background: #1e293b;
-            padding: 2px 8px;
-            border-radius: 4px;
-            z-index: 2;
-            border: 1px solid var(--success);
-            white-space: nowrap;
+            letter-spacing: -1px;
         }
 
         .btn {
             border: none;
             color: white;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 16px;
             cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-            font-size: 1rem;
-        }
-
-        .time-btn { background: #1e293b; border: 1px solid var(--primary); }
-        .time-btn:hover { background: var(--primary); transform: translateY(-2px); }
-        
-        .btn-30s { border: 2px solid var(--success); padding: 18px 14px; }
-        .btn-wide { grid-column: span 2; }
-        .btn-dark { background: #334155; border: 1px solid #475569; }
-
-        .fullscreen-tip {
-            margin-top: 25px;
-            font-size: 0.75rem;
-            color: #64748b;
-            font-style: italic;
-        }
-
-        .creator-tag {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: #818cf8;
-            font-weight: bold;
-            letter-spacing: 0.5px;
+            font-weight: 900;
+            font-size: 1.4rem;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
         }
 
-        .kb-key {
-            background: #334155;
-            padding: 2px 5px;
-            border-radius: 4px;
-            color: #cbd5e1;
-            font-family: monospace;
-            border-bottom: 2px solid #1e293b;
-        }
+        .time-btn { background: #1e293b; border: 2px solid var(--primary); }
+        .time-btn:hover { background: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4); }
+        
+        .btn-30s { border: 3px solid var(--success); padding: 24px 20px; }
+        .btn-dark { background: #334155; border: 2px solid #64748b; }
 
         .timer-display { 
-            font-family: 'Courier New', monospace; 
-            font-size: 3rem; 
-            color: #f87171; 
-            text-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
-            margin-bottom: 10px;
+            font-family: 'Monaco', 'Courier New', monospace; 
+            font-size: 5rem; 
+            color: #ff4d4d; /* Klarere rød */
+            text-shadow: 0 0 25px rgba(255, 77, 77, 0.3);
+            margin-bottom: 20px;
+            font-weight: 900;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-        }
-
-        .stat-box { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; color: #94a3b8; }
-
-        .scene {
-            width: 240px;
-            height: 120px;
-            margin: 20px auto;
-            perspective: 600px;
-        }
-
-        .cube {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        .stat-box { 
+            background: rgba(0,0,0,0.5); 
+            padding: 14px; 
+            border-radius: 12px; 
+            color: #f1f5f9; /* Hvitere tekst på stats */
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .cube-face {
             position: absolute;
-            width: 240px;
-            height: 120px;
+            width: 320px;
+            height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 5rem; /* Enda større tall */
             font-weight: 900;
-            background: #f8fafc;
-            color: #1e293b;
-            border: 6px solid var(--wood);
-            border-radius: 4px;
+            background: #ffffff; /* Maksimal kontrast */
+            color: #0f172a; /* Dyp mørk farge for tallene */
+            border: 8px solid var(--wood);
+            border-radius: 12px;
             backface-visibility: hidden;
+            letter-spacing: -2px;
         }
 
-        .face-0 { transform: rotateX(0deg) translateZ(60px); }
-        .face-1 { transform: rotateX(-90deg) translateZ(60px); }
-        .face-2 { transform: rotateX(-180deg) translateZ(60px); }
-        .face-3 { transform: rotateX(-270deg) translateZ(60px); }
-
-        .minus-sign { color: var(--primary); margin: 0 10px; }
+        .minus-sign { color: var(--primary); margin: 0 10px; font-weight: 400; }
 
         input {
-            background: #0f172a;
-            border: 2px solid #334155;
-            border-radius: 12px;
+            background: #020617; /* Svart bakgrunn for input */
+            border: 3px solid #475569;
+            border-radius: 18px;
             color: white;
-            font-size: 2.5rem;
-            padding: 10px;
+            font-size: 4.5rem;
+            padding: 15px;
             width: 100%;
-            box-sizing: border-box;
             text-align: center;
             outline: none;
-            margin-top: 10px;
-            user-select: auto;
-            -webkit-user-select: auto;
+            margin-top: 25px;
+            font-weight: 900;
+            transition: border-color 0.2s;
         }
+
+        input:focus { border-color: #f8fafc; }
+        input::placeholder { color: rgba(255,255,255,0.2); }
         
-        .stop-btn { background: var(--error); width: 100%; margin-top: 15px; padding: 12px; }
-        .feedback { height: 25px; margin-top: 5px; font-weight: bold; }
+        .stop-btn { background: var(--error); margin-top: 25px; }
+        .feedback { height: 40px; margin-top: 15px; font-weight: 900; font-size: 1.6rem; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
+<div class="creator-tag">Skaper: Kristian N.W</div>
+
 <div class="game-card">
     <div id="setup-screen">
         <h1>MINUS-KUBEN</h1>
-        <div class="time-grid">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <button class="btn time-btn" onclick="initGame(10)">10s</button>
             <button class="btn time-btn" onclick="initGame(15)">15s</button>
             <button class="btn time-btn" onclick="initGame(20)">20s</button>
             <button class="btn time-btn" onclick="initGame(45)">45s</button>
             
-            <div class="btn-wrapper">
-                <span class="btn-rec-label">Anbefalt for Klasse Utfordring</span>
-                <button class="btn time-btn btn-30s" onclick="initGame(30)">30 sekunder</button>
+            <div style="grid-column: span 2; position: relative; margin-top: 10px;">
+                <span style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 0.9rem; color: var(--success); font-weight: 900; background: #0f172a; padding: 2px 15px; border-radius: 6px; border: 2px solid var(--success); z-index: 2;">KLASSE-MODUS</span>
+                <button class="btn time-btn btn-30s" style="width:100%" onclick="initGame(30)">30 SEKUNDER</button>
             </div>
             
-            <button class="btn time-btn" onclick="initGame(60)">1 minutt</button>
-            <button class="btn time-btn btn-dark" onclick="startCustom()">⚙️ Custom</button>
-            <button class="btn time-btn btn-wide" style="background: var(--primary);" onclick="initGame('infinite')">♾️ EVIG MODUS</button>
+            <button class="btn time-btn" onclick="initGame(60)">1 MIN</button>
+            <button class="btn time-btn btn-dark" onclick="startCustom()">⚙️ NY</button>
+            <button class="btn time-btn" style="grid-column: span 2; background: var(--primary);" onclick="initGame('infinite')">♾️ EVIG MODUS</button>
         </div>
-
-        <div class="fullscreen-tip">
-            Hold <span class="kb-key">fn</span> + <span class="kb-key">F11</span> for fullskjerm
-        </div>
-
-        <div class="creator-tag">
-            Skaper: Kristian N.W
-        </div>
-
-        <div id="hs-info" style="font-size: 0.8rem; color: var(--primary); margin-top: 15px; font-weight: bold;"></div>
+        <div id="hs-info" style="font-size: 1.2rem; color: #a5b4fc; margin-top: 30px; font-weight: 900;"></div>
     </div>
 
     <div id="game-screen">
         <div class="timer-display" id="timer">0.0</div>
-        <div class="stats-grid">
-            <div class="stat-box">Poeng: <span id="score">0</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
+            <div class="stat-box">POENG: <span id="score">0</span></div>
             <div class="stat-box">RPM: <span id="rpm">0</span></div>
-            <div class="stat-box">✅: <span id="correct-count">0</span></div>
-            <div class="stat-box">❌: <span id="wrong-count">0</span></div>
+            <div class="stat-box" style="color:var(--success)">✅ <span id="correct-count">0</span></div>
+            <div class="stat-box" style="color:var(--error)">❌ <span id="wrong-count">0</span></div>
         </div>
 
-        <div class="scene">
-            <div class="cube" id="cube">
-                <div class="cube-face face-0" id="f0"></div>
-                <div class="cube-face face-1" id="f1"></div>
-                <div class="cube-face face-2" id="f2"></div>
-                <div class="cube-face face-3" id="f3"></div>
+        <div style="width: 320px; height: 160px; margin: 30px auto; perspective: 800px;">
+            <div class="cube" id="cube" style="width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
+                <div class="cube-face" style="transform: rotateX(0deg) translateZ(80px);" id="f0"></div>
+                <div class="cube-face" style="transform: rotateX(-90deg) translateZ(80px);" id="f1"></div>
+                <div class="cube-face" style="transform: rotateX(-180deg) translateZ(80px);" id="f2"></div>
+                <div class="cube-face" style="transform: rotateX(-270deg) translateZ(80px);" id="f3"></div>
             </div>
         </div>
 
@@ -272,24 +203,23 @@
 </div>
 
 <script>
-    const ranges = [[1,3], [2,5], [3,7], [4,9], [5,12], [7,15], [12,20]];
+    const ranges = [[1,4], [2,6], [3,8], [5,10], [7,13], [10,16], [14,22]];
     let currentRangeIdx = 0, score = 0, corrects = 0, wrongs = 0;
     let timeValue = 0, startTime = null, timerInterval = null, rotationCount = 0, currentTask = [0, 0];
     let mode = 'countdown';
 
     const savedHS = localStorage.getItem('kubeHS') || 0;
-    if(savedHS > 0) document.getElementById('hs-info').innerText = `BESTE POENGSUM: ${savedHS}`;
+    if(savedHS > 0) document.getElementById('hs-info').innerText = `BESTE: ${savedHS} POENG`;
 
     function startCustom() {
-        let input = prompt("Velg tid (sekunder):");
-        let val = parseInt(input);
-        if (!isNaN(val) && val >= 5 && val <= 600) initGame(val);
+        let val = parseInt(prompt("Sekunder:"));
+        if (!isNaN(val) && val >= 5) initGame(val);
     }
 
     function initGame(val) {
         score = 0; corrects = 0; wrongs = 0; rotationCount = 0; currentRangeIdx = 0;
-        if (val === 'infinite') { mode = 'infinite'; timeValue = 0; }
-        else { mode = 'countdown'; timeValue = val; }
+        mode = val === 'infinite' ? 'infinite' : 'countdown';
+        timeValue = val;
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('game-screen').style.display = 'block';
         currentTask = generateTask();
@@ -302,13 +232,13 @@
     function runTimer() {
         timerInterval = setInterval(() => {
             const diff = (Date.now() - startTime) / 1000;
-            if (diff > 0) document.getElementById('rpm').innerText = (corrects / (diff / 60)).toFixed(1);
+            document.getElementById('rpm').innerText = (corrects / (Math.max(1, diff) / 60)).toFixed(0);
             if (mode === 'infinite') {
                 document.getElementById('timer').innerText = diff.toFixed(1);
             } else {
-                let remaining = (timeValue - diff).toFixed(1);
-                document.getElementById('timer').innerText = Math.max(0, remaining);
-                if (remaining <= 0) endGame();
+                let rem = (timeValue - diff).toFixed(1);
+                document.getElementById('timer').innerText = Math.max(0, rem);
+                if (rem <= 0) endGame();
             }
         }, 100);
     }
@@ -332,18 +262,15 @@
         const correctAns = currentTask[0] - currentTask[1];
 
         if (userAns === correctAns) {
-            score += 1;
-            corrects++;
+            score++; corrects++;
             if (currentRangeIdx < ranges.length - 1) currentRangeIdx++;
             rotate(1);
-            msg.innerText = "RIKTIG! +1"; msg.style.color = "var(--success)";
+            msg.innerText = "RIKTIG!"; msg.style.color = "var(--success)";
         } else {
-            const diff = Math.abs(userAns - correctAns);
-            score = Math.max(0, score - diff);
-            wrongs++;
+            score = Math.max(0, score - 1); wrongs++;
             if (currentRangeIdx > 0) currentRangeIdx--;
             rotate(-1);
-            msg.innerText = `FEIL! -${diff}`; msg.style.color = "var(--error)";
+            msg.innerText = "FEIL!"; msg.style.color = "var(--error)";
         }
         document.getElementById('score').innerText = score;
         document.getElementById('correct-count').innerText = corrects;
@@ -363,14 +290,13 @@
         clearInterval(timerInterval);
         if (mode === 'countdown' && score > savedHS) localStorage.setItem('kubeHS', score);
         document.querySelector('.game-card').innerHTML = `
-            <h1 style="color:var(--primary)">RESULTAT</h1>
-            <div style="margin: 15px 0; font-size: 1.1rem; text-align: left; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                <p>🏆 Poeng: <b>${score}</b></p>
-                <p>✅ Riktige: <b>${corrects}</b></p>
-                <p>❌ Feil: <b>${wrongs}</b></p>
+            <h1>SLUTT!</h1>
+            <div style="margin: 20px 0; font-size: 1.6rem; text-align: left; background: rgba(0,0,0,0.4); padding: 30px; border-radius: 16px;">
+                <p>🏆 POENG: <b style="color:var(--primary);">${score}</b></p>
                 <p>⚡ RPM: <b>${document.getElementById('rpm').innerText}</b></p>
+                <p>✅ RIKTIGE: <b>${corrects}</b></p>
             </div>
-            <button onclick="location.reload()" style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 1.1rem;">TIL MENY</button>
+            <button onclick="location.reload()" class="btn" style="background:var(--success); width:100%;">PRØV IGJEN</button>
         `;
     }
 
